@@ -1,10 +1,15 @@
 <script>
     import Clock from './Clock.svelte'
-    let clockids = [0,1,2]
-    let clocks = []
+    import Grid from "svelte-grid";
+    import gridHelp from "svelte-grid/build/helper/index.mjs";
+    import { writable } from 'svelte-local-storage-store'
+    export const basis = writable("basetime", 5)
+
+    let clockids = [0,1,2,3]
+    let clocks =  []
     let current = -1
 
-    let basis = 10
+    //$basis = 10
     let byoyomis = 0
     let byoyomitime = 60
     let bronstein = 0
@@ -23,30 +28,46 @@
 
     function pause() {
         for (let i in clockids) {
-            clocks[i].stop()
+            clocks[i].pause()
         }
         current = -1
+        console.log(clocks)
     }
 
-
+    let items = [
+    gridHelp.item({ x: 0, y: 0, w: 2, h: 2, id: 1 }),
+    gridHelp.item({ x: 2, y: 0, w: 2, h: 2, id: 2 }),
+    ];
 
 </script>
 
-Basis <input bind:value={basis} type="number">
+{$basis}
+Basis <input bind:value={$basis} type="number">
 byoyomis <input bind:value={byoyomis} type="number">
 byoyomitime <input bind:value={byoyomitime} type="number">
 bronstein <input bind:value={bronstein} type="number">
 fischer <input bind:value={fischer} type="number">
 
 {#each clockids as c, i}
+<div class="box">
     <Clock 
         on:click={() => clicked(i)}
+        id={i}
         bind:this={clocks[i]}
-        bind:basis
+        bind:basis={$basis}
         bind:byoyomis
         bind:byoyomitime
         bind:bronstein
         bind:fischer
     />
+</div>
 {/each}
+
 <button on:click={pause}>||</button>
+
+<style>
+    .box {
+        float: left;
+        width: 45%;
+    }
+</style>
