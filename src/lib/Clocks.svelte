@@ -1,69 +1,68 @@
+63 lines (51 sloc) 1.53 KB
 <script>
-    import Clock from './Clock.svelte'
-    import Grid from "svelte-grid";
-    import gridHelp from "svelte-grid/build/helper/index.mjs";
+    import Clock2 from './Clock2.svelte'
     import { writable } from 'svelte-local-storage-store'
-    export const basis = writable("basetime", 5)
 
-    let clockids = [0,1,2,3]
-    let clocks =  []
-    let current = -1
+    let clockids = [0,1,2]
+    let clocks = []
+    let paused = undefined
 
-    //$basis = 10
-    let byoyomis = 0
-    let byoyomitime = 60
-    let bronstein = 0
-    let fischer = 0
+    const _config = {bronstein: 0, fischer: 0 , basetime: 10}
 
+    let config = writable("config", _config);
+   
     function clicked(i) {
-        if (current == -1){
-            current = i
-            clocks[current].run()
-        } else if (current == i){
+        if (clocks.every((c) => c.isrunning() == false)) {
+            clocks[i].start()
+            paused = undefined            
+        }
+        else if (clocks[i].isrunning()) {
             clocks[i].stop()
-            current = (i+1)%clockids.length
-            clocks[current].run()
+            let current = (i+1)%clockids.length
+            clocks[current].start()
         }
     }
 
     function pause() {
-        for (let i in clockids) {
-            clocks[i].pause()
+        if (paused === undefined) {  // not paused
+            for (let i in clockids) {
+                clocks[i].isrunning() && (paused = i)
+                clocks[i].pause()
+            }
+        } else {  // resume
+            clocks[paused].unpause()
+            paused = undefined
         }
-        current = -1
-        console.log(clocks)
     }
 
-    let items = [
-    gridHelp.item({ x: 0, y: 0, w: 2, h: 2, id: 1 }),
-    gridHelp.item({ x: 2, y: 0, w: 2, h: 2, id: 2 }),
-    ];
+    function reset() {
+        for (let i in clockids) {
+            clocks[i].reset()
+        }
+        paused = undefined
+    }
+
+
+
 
 </script>
 
-{$basis}
-Basis <input bind:value={$basis} type="number">
-byoyomis <input bind:value={byoyomis} type="number">
-byoyomitime <input bind:value={byoyomitime} type="number">
-bronstein <input bind:value={bronstein} type="number">
-fischer <input bind:value={fischer} type="number">
+Basis <input bind:value={$config.basetime} type="number">
+bronstein <input bind:value={$config.bronstein} type="number">
+fischer <input bind:value={$config.fischer} type="number">
 
 {#each clockids as c, i}
 <div class="box">
-    <Clock 
+    <Clock2 
         on:click={() => clicked(i)}
-        id={i}
         bind:this={clocks[i]}
-        bind:basis={$basis}
-        bind:byoyomis
-        bind:byoyomitime
-        bind:bronstein
-        bind:fischer
+        id = {i}
+        config = {$config}
     />
 </div>
 {/each}
-
 <button on:click={pause}>||</button>
+<button on:click={reset}>0</button>
 
 <style>
     .box {
