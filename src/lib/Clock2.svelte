@@ -25,7 +25,7 @@
   /*
   how i would actually have liked to managed the state:
   export let totaltime, running, runbron  // these bind 2 way to the store below
-  {seconds, running, bronstein, } = propstore(id, )
+  {seconds, running, bronstein, } = propstore(id, [def1, def2, ])
   $seconds = $seconds + 1
   // propstore now forwards the updates to the Component prop (totaltime, ...)
   */
@@ -93,7 +93,7 @@
     if (time < 0) {str+="-"}
     time = Math.abs(time)
     let hour = Math.floor(time / (60*60))
-    let mins = Math.floor(time / (60))
+    let mins = Math.floor((time / (60))%60)
     let sec = Math.floor(time % 60)
     let ms = Math.floor((time % 1)*10)
     if (hour > 0) {
@@ -132,15 +132,17 @@
     $state.totaltime = 0  
     _str = print()
   }
+
+  $: bronstr = formattime($state.bronstein)
   
 </script>
 
 
 <div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
   <input class="w3-input" bind:value={$state.name}>
-  <div class="time">{formattime($state.seconds + $state.bronstein)}</div>
-  <div class="moves">{averagetime}</div>
-  <div class="total">{formattime($state.totaltime)}</div>
+  <div class="time">{formattime($state.seconds)}<div class="w3-text-gray">{#if $state.bronstein>0}{bronstr}{/if}</div></div>
+  <div class="moves w3-padding-16">{averagetime}</div>
+  <div class="total w3-padding-16">{formattime($state.totaltime)}</div>
   
 </div>
 
