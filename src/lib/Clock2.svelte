@@ -1,3 +1,7 @@
+
+
+
+
 <script>
   import { writable } from 'svelte-local-storage-store'
   
@@ -9,7 +13,22 @@
   $: ({basetime, fischer, bronstein} = config);
   
   // we cant access the extracted vars basetime, ..., since they are still #undef when this is run
-  const _state = {seconds: config.basetime, running: false, bronstein: config.bronstein, checkpoint: 0, }
+  const _state = {
+    seconds: config.basetime, 
+    running: false, 
+    bronstein: config.bronstein, 
+    checkpoint: 0, 
+    moves: 0,
+    totaltime: 0,
+    name: ""}
+
+  /*
+  how i would actually have liked to managed the state:
+  export let totaltime, running, runbron  // these bind 2 way to the store below
+  {seconds, running, bronstein, } = propstore(id, )
+  $seconds = $seconds + 1
+  // propstore now forwards the updates to the Component prop (totaltime, ...)
+  */
   let state = writable("clockstate-"+id, _state);
   
   // twoway extraction
@@ -25,8 +44,9 @@
   function update() {
     if ($state.running) {
       let now = Date.now()
-      let passed = (now - $state.checkpoint) / 1000
+      let passed = (now - $state.checkpoint) / 1000 // > 0
       $state.checkpoint = now
+      $state.totaltime += passed
       
       if ($state.bronstein - passed > 0) {
         $state.bronstein -= passed
@@ -34,8 +54,6 @@
         $state.seconds -= passed - $state.bronstein
         $state.bronstein = 0
       }
-      
-      _str = print()
     }
     
   }
@@ -48,9 +66,11 @@
   export function stop() {
     pause()
     $state.seconds += fischer
+    $state.moves += 1
   }
   
   export function pause() {
+    update()
     $state.running=false
   }
   export function unpause() 
@@ -61,24 +81,67 @@
   
   function print() {
     let str = $state.seconds.toFixed(1)
+    str=formattime($state.seconds)
     if ($state.bronstein > 0) {
       str = '(' + $state.bronstein.toFixed(1) + ')+' + str
     }
     return str
   }
+
+  function formattime(time) {
+    let str = ""
+    if (time < 0) {str+="-"}
+    time = Math.abs(time)
+    let hour = Math.floor(time / (60*60))
+    let mins = Math.floor(time / (60))
+    let sec = Math.floor(time % 60)
+    let ms = Math.floor((time % 1)*10)
+    if (hour > 0) {
+      str += hour + ":"
+      if (mins<10) {str += "0"}
+    }
+    
+    
+
+    if (mins > 0) {
+      str += mins + ":"
+      if (sec<10) {str += "0"}
+    }
+    str +=  sec
+    
+    //if (mins < 1) {str += "." + ms}
+    return str
+  }
+
+  let print_bron = ""
+  $: print_bron = formatbron($state.bronstein)
+  function formatbron(bron) {
+    if (bron > 0) {
+      return "(" + formattime(bron) + ") "
+    } else {return ""}
+  }
+
+  let averagetime
+  $: averagetime = formattime($state.totaltime / $state.moves)
   
   export function reset() {
     $state.seconds = config.basetime
     $state.running = false
     $state.bronstein = config.bronstein
+    $state.moves = 0
+    $state.totaltime = 0  
     _str = print()
   }
   
 </script>
 
-<div id="square" on:click class="{$state.running ? 'running' : ''}">
-  <input>
-  <div class="time">{_str}</div>
+
+<div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
+  <input class="w3-input" bind:value={$state.name}>
+  <div class="time">{formattime($state.seconds + $state.bronstein)}</div>
+  <div class="moves">{averagetime}</div>
+  <div class="total">{formattime($state.totaltime)}</div>
+  
 </div>
 
 <style>
@@ -100,6 +163,13 @@
     top: 50%;
     width: 100%;
     text-align: center;
+  }
+
+  input
+  {
+      background: transparent;
+      border: none;
+      text-align: center;
   }
   
   .total{
