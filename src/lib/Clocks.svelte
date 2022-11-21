@@ -20,7 +20,7 @@
         {#each clockids as i}
         <div class="watches">
             <div class="w3-sand w3-border w3-margin w3-round-large">
-                <Clock2 
+                <Clock 
                 on:click={() => clicked(i)}
                 bind:this={clocks[i]}
                 id = {i}
@@ -47,7 +47,7 @@
 </style>
 
 <script>
-    import Clock2 from './Clock2.svelte'
+    import Clock from './Clock.svelte'
     import { writable } from 'svelte-local-storage-store'
     
     let clockids = [0,1,4,2,3]
