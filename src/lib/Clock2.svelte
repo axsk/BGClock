@@ -1,10 +1,6 @@
-
-
-
-
 <script>
   import { writable } from 'svelte-local-storage-store'
-  
+
   export let id = 0
   
   // config
@@ -104,9 +100,9 @@
     
 
     if (mins > 0) {
-      str += mins + ":"
+      str += mins + "<td>:</td>"
       if (sec<10) {str += "0"}
-    }
+    } 
     str +=  sec
     
     //if (mins < 1) {str += "." + ms}
@@ -138,21 +134,38 @@
 </script>
 
 
-<div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
-  <input class="w3-input" bind:value={$state.name}>
-  <div class="time">{formattime($state.seconds)}<div class="w3-text-gray">{#if $state.bronstein>0}{bronstr}{/if}</div></div>
-  <div class="moves w3-padding-16">{averagetime}</div>
-  <div class="total w3-padding-16">{formattime($state.totaltime)}</div>
+<div id="square" on:click class="w3-display {$state.running ? 'running' : ''}" on:keydown>
+  <input class="w3-input" style="color:black;"  bind:value={$state.name}>
+  <div class="time">
+    <table class="" style="position:absolute; left:50%; transform:translate(-50%); text-align:right">
+        <tr >
+            {@html formattime($state.seconds)}
+        </tr>
+        <tr style="color: gray;">
+            {#if $state.bronstein>0}{@html bronstr}{/if}
+        </tr>
+    </table>
+    
+   <!-- {#key $state.runing} {#if $state.running == false}
+            <div transition:fade>+{config.fischer}</div>
+        {/if}{/key}
+    -->
+
+  </div>
+  <div class="w3-display-bottomleft w3-padding">
+    {$state.moves}
+    {#if $state.moves > 0} ({@html averagetime}){/if}
+  </div>
+  <div class="w3-display-bottomright w3-padding">{@html formattime($state.totaltime)}</div>
   
 </div>
 
 <style>
   #square{
     width: 100%;
-    padding: 0px;
     padding-top: 100%;
     position:relative;
-    font-size: 200%;
+    font-size: 2vw;
   }
   
   .running{
@@ -161,37 +174,18 @@
   
   .time{
     position: absolute;
-    font-size: 3vw;
-    top: 50%;
+    font-size: 5vw;
     width: 100%;
+    top: 33%;
+    left: 0%;
     text-align: center;
   }
 
   input
   {
-      background: transparent;
-      border: none;
-      text-align: center;
-  }
-  
-  .total{
-    position: absolute;
-    right: 0%;
-    bottom: 0%;
-  }
-  
-  .moves{
-    position: absolute;
-    left: 0%;
-    bottom: 0%;
-  }
-  
-  .label{
     position:absolute;
-    top:0%;
-    width:100%;
+    top: 0%;
+    background: transparent;
     text-align: center;
-  }
-  
-  
+  }  
 </style>
