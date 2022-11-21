@@ -96,11 +96,9 @@
       str += hour + ":"
       if (mins<10) {str += "0"}
     }
-    
-    
 
     if (mins > 0) {
-      str += mins + "<td>:</td>"
+      str += mins + ":"
       if (sec<10) {str += "0"}
     } 
     str +=  sec
@@ -109,15 +107,6 @@
     return str
   }
 
-  let print_bron = ""
-  $: print_bron = formatbron($state.bronstein)
-  function formatbron(bron) {
-    if (bron > 0) {
-      return "(" + formattime(bron) + ") "
-    } else {return ""}
-  }
-
-  let averagetime
   $: averagetime = formattime($state.totaltime / $state.moves)
   
   export function reset() {
@@ -128,23 +117,19 @@
     $state.totaltime = 0  
     _str = print()
   }
-
-  $: bronstr = formattime($state.bronstein)
   
 </script>
 
 
-<div id="square" on:click class="w3-display {$state.running ? 'running' : ''}" on:keydown>
+<div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
   <input class="w3-input" style="color:black;"  bind:value={$state.name}>
   <div class="time">
-    <table class="" style="position:absolute; left:50%; transform:translate(-50%); text-align:right">
-        <tr >
-            {@html formattime($state.seconds)}
-        </tr>
-        <tr style="color: gray;">
-            {#if $state.bronstein>0}{@html bronstr}{/if}
-        </tr>
-    </table>
+    <div class="" style="position:absolute; left:50%; transform:translate(-50%); text-align:right">
+            {formattime($state.seconds)}
+        <div style="color: gray;">
+            {#if $state.bronstein>0}{formattime($state.bronstein)}{/if}
+        </div>
+    </div>
     
    <!-- {#key $state.runing} {#if $state.running == false}
             <div transition:fade>+{config.fischer}</div>
@@ -169,7 +154,7 @@
   }
   
   .running{
-    background: rgb(151, 205, 255);
+    background-color:rgba(0, 200, 255, 0.502);
   }
   
   .time{
