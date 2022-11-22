@@ -4,25 +4,32 @@
         Settings <input type=checkbox bind:checked={showsettings}>
         {#if showsettings}
          <div class="">
-            
+            Players <input bind:value={$config.players} type="number">
             Basis <input bind:value={$config.basetime} type="number">
-            bronstein <input bind:value={$config.bronstein} type="number">
-            fischer <input bind:value={$config.fischer} type="number">
+            Bronstein <input bind:value={$config.bronstein} type="number">
+            Fischer <input bind:value={$config.fischer} type="number">
             
-            fixed order<input type=checkbox bind:checked={$config.ordered}> 
+            Fixed order<input type=checkbox bind:checked={$config.ordered}> 
             <button on:click={reset} class="w3-button">RESET</button>
         </div>
         {/if}
-       
+        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">||</button>
+        <button on:click={undo} class="w3-button">UNDO</button>
     </div>
-    <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">||</button>
-    <button on:click={undo} class="w3-button">UNDO</button>
+    
     <div style="position:absolute; width:100%; left:0">
         {#each clockids as i}
-        
+            <div class="w3-sand w3-border w3-padding w3-margin w3-round-large watch">
+                <Clock 
+                on:click={() => clicked(i)}
+                bind:this={clocks[i]}
+                id = {i}
+                config = {$config}
+                />
+            </div>
         {/each}
     </div>
-    <div class=demo-container>
+<!--     <div class=demo-container>
         <Grid bind:items let:item={item} let:dataItem {cols} fillSpace={true} rowHeight={600}>
             <div class="">
                 <div class="w3-sand w3-border w3-margin w3-round-large">
@@ -35,76 +42,78 @@
                 </div>
             </div>
         </Grid>
-    </div>
+    </div> -->
 </div>
 
 
 <style>
-    .watches {
-        float: left;
-        width:  50%;
+    .watch {
+        float: left; 
+        width: 40%;
     }
 
-    input
+    /* input
     {
         background: transparent;
-        border: none;
-    }
-    .demo-container {
+        border: 1px;
+    } */
+    /* .demo-container {
         width: 100%;
         }
-        .demo-widget {
-        height: 100%;
-        width: 100%;
-        }
+    .demo-widget {
+    height: 100%;
+    width: 100%;
+    } */
 </style>
 
-<script>
-    import Grid from "svelte-grid";
-    import gridHelp from "svelte-grid/build/helper/index.mjs";
+<script lang="ts">
+    // import Grid from "svelte-grid";
+    // import gridHelp from "svelte-grid/build/helper/index.mjs";
     
-    const COL=3
-    let items = [0,1,4,2,3].map(function(id){
-        return {
-            [COL] : gridHelp.item({
-                w: 1,
-                h: 1,
-                x: id,
-                y: 0,
-                resizable: false,
-                id: id
-                }),
-            id: id
-        }
-    })
+    // const COL=3
+    // const cols = [[1000, COL]];
+    // let items = [0,1,4,2,3].map(function(id){
+    //     return {
+    //         [COL] : gridHelp.item({
+    //             w: 1,
+    //             h: 1,
+    //             x: 0,
+    //             y: id,
+    //             resizable: false,
+    //             }),
+    //         id: id
+    //     }
+    // })
 
-    let states = []
-    const cols = [[1000, COL]];
+    
+    
 
     import Clock from './Clock.svelte'
     import { writable } from 'svelte-local-storage-store'
     
-    let clockids = [0,1,4,2,3]
-    let clocks = []
     let paused = undefined
     let showsettings = false;
+
+    let clocks = []  // bound to clock objects
+    let history = [] 
+    let clockids = [0,1,4,2,3]
+    $: clockids = [...Array($config.players).keys()];
     
-    const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10}
+    const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10, ordered:true}
     
     let config = writable("config", _config);
 
     function undo() {
-        if (states.length == 0) {return}
-        let last = states.pop()
+        if (history.length == 0) {return}
+        let last = history.pop()
         for (let i in clocks) {
             clocks[i].setstate(last[i])
         }
-
     }
-    function clicked(i) {
-        states.push(
+
+    function clicked(i: number) {
+        history.push(
             structuredClone(clocks.map(c=>c.getstate())))
-        console.log(states)
 
         if (clocks.every((c) => c.isrunning() == false)) {
             clocks[i].start()
@@ -115,8 +124,6 @@
             let current = (i+1)%clockids.length
             clocks[current].start()
         } else if (! $config.ordered && !clocks[i].isrunning()) {
-            clocks.every((c) => c.start())
-            //clocks[i].start()
             for (let i in clockids) {
                 clocks[i].isrunning() && (clocks[i].stop())
             }
@@ -133,7 +140,9 @@
                 clocks[i].pause()
             }
         } else {  // resume
-            clocks[paused].unpause()
+            if (clocks.every(c=>!c.isrunning())) {
+                clocks[paused].unpause()
+            }
             paused = undefined
         }
     }
