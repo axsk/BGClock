@@ -9,13 +9,14 @@
             bronstein <input bind:value={$config.bronstein} type="number">
             fischer <input bind:value={$config.fischer} type="number">
             
-            
+            fixed order<input type=checkbox bind:checked={$config.ordered}> 
             <button on:click={reset} class="w3-button">RESET</button>
         </div>
         {/if}
        
     </div>
     <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">||</button>
+    <button on:click={undo} class="w3-button">UNDO</button>
     <div style="position:absolute; width:100%; left:0">
         {#each clockids as i}
         
@@ -61,7 +62,7 @@
 <script>
     import Grid from "svelte-grid";
     import gridHelp from "svelte-grid/build/helper/index.mjs";
-
+    
     const COL=3
     let items = [0,1,4,2,3].map(function(id){
         return {
@@ -69,13 +70,15 @@
                 w: 1,
                 h: 1,
                 x: id,
-                y: id,
-                resizable: false, 
+                y: 0,
+                resizable: false,
+                id: id
                 }),
             id: id
         }
     })
 
+    let states = []
     const cols = [[1000, COL]];
 
     import Clock from './Clock.svelte'
@@ -89,16 +92,37 @@
     const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10}
     
     let config = writable("config", _config);
-    
+
+    function undo() {
+        if (states.length == 0) {return}
+        let last = states.pop()
+        for (let i in clocks) {
+            clocks[i].setstate(last[i])
+        }
+
+    }
     function clicked(i) {
+        states.push(
+            structuredClone(clocks.map(c=>c.getstate())))
+        console.log(states)
+
         if (clocks.every((c) => c.isrunning() == false)) {
             clocks[i].start()
             paused = undefined            
         }
-        else if (clocks[i].isrunning()) {
+        else if ($config.ordered && clocks[i].isrunning()) {
             clocks[i].stop()
             let current = (i+1)%clockids.length
             clocks[current].start()
+        } else if (! $config.ordered && !clocks[i].isrunning()) {
+            clocks.every((c) => c.start())
+            //clocks[i].start()
+            for (let i in clockids) {
+                clocks[i].isrunning() && (clocks[i].stop())
+            }
+            clocks[i].start()
+        } else if (! $config.ordered && clocks[i].isrunning()) {
+            clocks[i].stop()
         }
     }
     

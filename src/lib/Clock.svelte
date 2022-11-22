@@ -32,6 +32,9 @@
   setInterval(update, 100)
   
   export function isrunning() {return $state.running}
+
+  export function getstate() {return $state}
+  export function setstate(s) {$state = s}
   
   function update() {
     if ($state.running) {
