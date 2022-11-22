@@ -5,8 +5,6 @@
   
   // config
   export let config = {basetime: 5, fischer: 5, bronstein:5}
-  // oneway extraction
-  $: ({basetime, fischer, bronstein} = config);
   
   // we cant access the extracted vars basetime, ..., since they are still #undef when this is run
   const _state = {
@@ -31,8 +29,6 @@
   //let {state.seconds, state.running, state.bronstein} = $state
   //$: $state = {state.seconds, state.running, state.bronstein};
   
-  let _str
-  
   setInterval(update, 100)
   
   export function isrunning() {return $state.running}
@@ -56,12 +52,12 @@
   
   export function start() {
     unpause()
-    $state.bronstein = bronstein
+    $state.bronstein = config.bronstein
   }
   
   export function stop() {
     pause()
-    $state.seconds += fischer
+    $state.seconds += config.fischer
     $state.moves += 1
   }
   
@@ -75,15 +71,6 @@
     $state.running=true
   }
   
-  function print() {
-    let str = $state.seconds.toFixed(1)
-    str=formattime($state.seconds)
-    if ($state.bronstein > 0) {
-      str = '(' + $state.bronstein.toFixed(1) + ')+' + str
-    }
-    return str
-  }
-
   function formattime(time) {
     let str = ""
     if (time < 0) {str+="-"}
@@ -115,7 +102,6 @@
     $state.bronstein = config.bronstein
     $state.moves = 0
     $state.totaltime = 0  
-    _str = print()
   }
   
 </script>

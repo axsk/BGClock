@@ -18,17 +18,22 @@
     <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">||</button>
     <div style="position:absolute; width:100%; left:0">
         {#each clockids as i}
-        <div class="watches">
-            <div class="w3-sand w3-border w3-margin w3-round-large">
-                <Clock 
-                on:click={() => clicked(i)}
-                bind:this={clocks[i]}
-                id = {i}
-                config = {$config}
-                />
-            </div>
-        </div>
+        
         {/each}
+    </div>
+    <div class=demo-container>
+        <Grid bind:items let:item={item} let:dataItem {cols} fillSpace={true} rowHeight={600}>
+            <div class="">
+                <div class="w3-sand w3-border w3-margin w3-round-large">
+                    <Clock 
+                    on:click={() => clicked(dataItem.id)}
+                    bind:this={clocks[dataItem.id]}
+                    id = {dataItem.id}
+                    config = {$config}
+                    />
+                </div>
+            </div>
+        </Grid>
     </div>
 </div>
 
@@ -44,9 +49,35 @@
         background: transparent;
         border: none;
     }
+    .demo-container {
+        width: 100%;
+        }
+        .demo-widget {
+        height: 100%;
+        width: 100%;
+        }
 </style>
 
 <script>
+    import Grid from "svelte-grid";
+    import gridHelp from "svelte-grid/build/helper/index.mjs";
+
+    const COL=3
+    let items = [0,1,4,2,3].map(function(id){
+        return {
+            [COL] : gridHelp.item({
+                w: 1,
+                h: 1,
+                x: id,
+                y: id,
+                resizable: false, 
+                }),
+            id: id
+        }
+    })
+
+    const cols = [[1000, COL]];
+
     import Clock from './Clock.svelte'
     import { writable } from 'svelte-local-storage-store'
     
@@ -55,7 +86,7 @@
     let paused = undefined
     let showsettings = false;
     
-    const _config = {bronstein: 0, fischer: 0 , basetime: 10}
+    const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10}
     
     let config = writable("config", _config);
     
