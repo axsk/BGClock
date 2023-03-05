@@ -11,15 +11,5 @@
 </main>
 
 <style>
-:global(html) {
-  height: 100%;
-}
 
-:global(body) {
-  width: 100vw;
-  height: 100vh;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
 </style>

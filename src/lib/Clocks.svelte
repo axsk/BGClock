@@ -61,6 +61,8 @@
     .watch {
         float: left; 
         width: 45%;
+        touch-action: none;
+
     }
 
     input {
