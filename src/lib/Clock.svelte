@@ -5,6 +5,8 @@
   
   // config
   export let config = {basetime: 5, fischer: 5, bronstein:5}
+
+  export let editable = false
   
   // we cant access the extracted vars basetime, ..., since they are still #undef when this is run
   const _state = {
@@ -111,7 +113,11 @@
 
 
 <div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
-  <input class="w3-input" style="color:black;"  bind:value={$state.name}>
+  {#if editable}
+  <input class="w3-input" style="color:black"  bind:value={$state.name}>
+  {:else}
+  <input class="w3-input" style="color:black; pointer-events: none"  bind:value={$state.name}>
+  {/if}
   <div class="time">
     <div class="" style="position:absolute; left:50%; transform:translate(-50%); text-align:right">
             {formattime($state.seconds)}

@@ -25,6 +25,7 @@
                 bind:this={clocks[i]}
                 id = {i}
                 config = {$config}
+                editable = {showsettings}
                 />
             </div>
         {/each}
