@@ -18,7 +18,7 @@
         {#if paused}
         ⏵︎
         {:else}
-            ⏸
+        ⏸︎
         {/if}
     </button>
     </div>
