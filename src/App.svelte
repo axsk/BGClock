@@ -12,14 +12,15 @@
 
 <style>
 :global(html) {
-  position: fixed;
   height: 100%;
+  overflow: hidden;
 }
 
 :global(body) {
   width: 100vw;
   height: 100vh;
   overflow-y: scroll;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 </style>
