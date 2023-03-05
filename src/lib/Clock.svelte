@@ -16,7 +16,7 @@
     checkpoint: 0, 
     moves: 0,
     totaltime: 0,
-    name: ""}
+    name: "Player"}
 
   /*
   how i would actually have liked to managed the state:

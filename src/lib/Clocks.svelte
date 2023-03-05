@@ -99,6 +99,17 @@
     let history = [] 
     let clockids = [0,1,4,2,3]
     $: clockids = [...Array($config.players).keys()];
+
+    const nextclock = [
+        [0],
+        [1,0],
+        [1,2,0],
+        [1,3,0,2],
+        [0,1,3,4,2],
+        [0,1,3,5,4,2],
+        [0,1,3,5,6,4,2],
+        [0,1,3,5,7,6,4,2]
+    ]
     
     const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10, ordered:true}
     
@@ -113,6 +124,7 @@
     }
 
     function clicked(i: number) {
+        if (showsettings) {return}
         history.push(
             structuredClone(clocks.map(c=>c.getstate())))
 
@@ -122,7 +134,7 @@
         }
         else if ($config.ordered && clocks[i].isrunning()) {
             clocks[i].stop()
-            let current = (i+1)%clockids.length
+            let current = nextclock[$config.players-1][i]
             clocks[current].start()
         } else if (! $config.ordered && !clocks[i].isrunning()) {
             for (let i in clockids) {
@@ -135,6 +147,9 @@
     }
     
     function pause() {
+        history.push(
+            structuredClone(clocks.map(c=>c.getstate())))
+
         if (paused === undefined) {  // not paused
             for (let i in clockids) {
                 clocks[i].isrunning() && (paused = i)
