@@ -1,32 +1,36 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
 <div style="position: absolute;width: 100%;height: 100%;left: 0;top: 0;">
     <div class="">
-        Settings <input type=checkbox bind:checked={showsettings}>
+        Settings <input type=checkbox bind:checked={showsettings}><br>
         {#if showsettings}
-         <div class="">
+         <div style="display:flex; flex-direction:column; width:20%; margin:auto; padding:20px">
             Players <input bind:value={$config.players} type="number">
             Basis <input bind:value={$config.basetime} type="number">
             Bronstein <input bind:value={$config.bronstein} type="number">
             Fischer <input bind:value={$config.fischer} type="number">
+            <label  for="order">Clockwise</label><br><input id="order" type=checkbox bind:checked={$config.ordered}> 
             
-            Fixed order<input type=checkbox bind:checked={$config.ordered}> 
-            <button on:click={reset} class="w3-button">RESET</button>
+            <button on:click={reset} class="w3-button w3-padding-small w3-light-grey w3-medium">RESET</button>
         </div>
         {/if}
-        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">||</button>
-        <button on:click={undo} class="w3-button">UNDO</button>
+        <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">↩</button>
+        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">⏸︎</button>
     </div>
     
-    <div style="position:absolute; width:100%; left:0">
+    <div style="position:absolute; width:100%; left:0; display: flex;
+    flex-flow: row wrap;
+    justify-content: center;">
         {#each clockids as i}
-            <div class="w3-sand w3-border w3-padding w3-margin w3-round-large watch">
-                <Clock 
-                on:click={() => clicked(i)}
-                bind:this={clocks[i]}
-                id = {i}
-                config = {$config}
-                editable = {showsettings}
-                />
+            <div class="watch">
+                <div class="w3-sand w3-border w3-padding w3-margin w3-round-large">
+                    <Clock 
+                    on:click={() => clicked(i)}
+                    bind:this={clocks[i]}
+                    id = {i}
+                    config = {$config}
+                    editable = {showsettings}
+                    />
+                </div>
             </div>
         {/each}
     </div>
@@ -50,7 +54,11 @@
 <style>
     .watch {
         float: left; 
-        width: 40%;
+        width: 45%;
+    }
+
+    input {
+        text-align: center;
     }
 
     /* input
