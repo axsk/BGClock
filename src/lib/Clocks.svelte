@@ -111,14 +111,14 @@
         [0,1,3,5,7,6,4,2]
     ]
     
-    const _config = {players: 2, bronstein: 0, fischer: 0 , basetime: 10, ordered:true}
+    const _config = {players: 2, bronstein: 5, fischer: 5 , basetime: 10, ordered:true}
     
     let config = writable("config", _config);
 
     function undo() {
         if (history.length == 0) {return}
         let last = history.pop()
-        for (let i in clocks) {
+        for (let i in last) {
             clocks[i].setstate(last[i])
         }
     }
