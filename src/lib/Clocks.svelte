@@ -13,8 +13,14 @@
             <button on:click={reset} class="w3-button w3-padding-small w3-light-grey w3-medium">RESET</button>
         </div>
         {/if}
-        <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">⏴︎</button>
-        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">⏸︎</button>
+        <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">⏪︎</button>
+        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">
+        {#if paused}
+        ⏵︎
+        {:else}
+            ⏸
+        {/if}
+    </button>
     </div>
     
     <div style="position:absolute; width:100%; left:0; display: flex;
@@ -125,7 +131,10 @@
 
     function undo() {
         if (history.length == 0) {return}
+        
         let last = history.pop()
+
+        
         for (let i in last) {
             clocks[i].setstate(last[i])
         }
@@ -133,8 +142,8 @@
 
     function clicked(i: number) {
         if (showsettings) {return}
-        history.push(
-            structuredClone(clocks.map(c=>c.getstate())))
+
+        logstate()
 
         if (clocks.every((c) => c.isrunning() == false)) {
             clocks[i].start()
@@ -155,9 +164,7 @@
     }
     
     function pause() {
-        history.push(
-            structuredClone(clocks.map(c=>c.getstate())))
-
+        logstate()
         if (paused === undefined) {  // not paused
             for (let i in clockids) {
                 clocks[i].isrunning() && (paused = i)
@@ -172,11 +179,17 @@
     }
     
     function reset() {
+        logstate()
         for (let i in clockids) {
             clocks[i].reset()
         }
         paused = undefined
     } 
+
+    function logstate() {
+        history.push(
+            structuredClone(clocks.map(c=>c.getstate())))
+    }
 </script>
 
 
