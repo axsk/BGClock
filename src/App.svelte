@@ -11,7 +11,14 @@
 </main>
 
 <style>
-body, html {
-  position: fixed;
+:global(html) {
+  position: relative;
+  overflow-y: scroll;
+}
+
+:global(body) {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 </style>
