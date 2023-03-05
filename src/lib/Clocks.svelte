@@ -111,7 +111,7 @@
         [0,1,3,5,7,6,4,2]
     ]
     
-    const _config = {players: 2, bronstein: 5, fischer: 5 , basetime: 10, ordered:true}
+    const _config = {players: 4, bronstein: 5, fischer: 5 , basetime: 10, ordered:true}
     
     let config = writable("config", _config);
 
