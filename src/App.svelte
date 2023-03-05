@@ -12,13 +12,11 @@
 
 <style>
 :global(html) {
-  position: relative;
-  overflow-y: scroll;
+
 }
 
 :global(body) {
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+
 }
 </style>
