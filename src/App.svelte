@@ -12,7 +12,6 @@
 
 <style>
 :global(html) {
-  overflow: hidden;
 }
 
 :global(body) {
