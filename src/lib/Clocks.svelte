@@ -30,7 +30,7 @@
             <div class="watch">
                 <div class="w3-sand w3-border w3-padding w3-margin w3-round-large">
                     <Clock 
-                    on:click={() => clicked(i)}
+                    on:mousedown={() => clicked(i)}
                     bind:this={clocks[i]}
                     id = {i}
                     config = {$config}
