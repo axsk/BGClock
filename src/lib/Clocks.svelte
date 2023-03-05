@@ -13,7 +13,7 @@
             <button on:click={reset} class="w3-button w3-padding-small w3-light-grey w3-medium">RESET</button>
         </div>
         {/if}
-        <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">↩</button>
+        <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">⏴︎</button>
         <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">⏸︎</button>
     </div>
     
