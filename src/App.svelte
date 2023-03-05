@@ -11,5 +11,7 @@
 </main>
 
 <style>
-
+body, html {
+  position: fixed;
+}
 </style>
