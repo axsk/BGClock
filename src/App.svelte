@@ -13,7 +13,6 @@
 <style>
 :global(html) {
   height: 100%;
-  overflow: hidden;
 }
 
 :global(body) {
