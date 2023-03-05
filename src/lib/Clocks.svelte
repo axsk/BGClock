@@ -119,10 +119,10 @@
         [1,0],
         [1,2,0],
         [1,3,0,2],
-        [0,1,3,4,2],
-        [0,1,3,5,4,2],
-        [0,1,3,5,6,4,2],
-        [0,1,3,5,7,6,4,2]
+        [1,3,0,4,2],
+        [1,3,0,5,2,4],
+        [1,3,0,5,2,6,4],
+        [1,3,0,5,2,7,4,6],
     ]
     
     const _config = {players: 4, bronstein: 5, fischer: 5 , basetime: 10, ordered:true}
@@ -140,12 +140,16 @@
         }
     }
 
+    function xclocks() {
+        return clocks.slice(0, $config.players)
+    }
+
     function clicked(i: number) {
         if (showsettings) {return}
 
         logstate()
 
-        if (clocks.every((c) => c.isrunning() == false)) {
+        if (xclocks().every((c) => c.isrunning() == false)) {
             clocks[i].start()
             paused = undefined            
         }
@@ -171,7 +175,7 @@
                 clocks[i].pause()
             }
         } else {  // resume
-            if (clocks.every(c=>!c.isrunning())) {
+            if (xclocks().every(c=>!c.isrunning())) {
                 clocks[paused].unpause()
             }
             paused = undefined
@@ -188,7 +192,7 @@
 
     function logstate() {
         history.push(
-            structuredClone(clocks.map(c=>c.getstate())))
+            structuredClone(xclocks().map(c=>c.getstate())))
     }
 </script>
 
