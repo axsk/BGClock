@@ -146,6 +146,7 @@
     padding-top: 100%;
     position:relative;
     font-size: 2vw;
+    touch-action: none;
   }
   
   .running{
