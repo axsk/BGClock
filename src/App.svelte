@@ -11,5 +11,12 @@
 </main>
 
 <style>
+:global(html) {
+  
+}
 
+:global(body) {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: auto;
+}
 </style>
