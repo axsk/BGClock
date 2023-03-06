@@ -14,7 +14,7 @@
         </div>
         {/if}
         <button on:click={undo} class="w3-button w3-padding-large w3-light-grey w3-xxlarge">⏪︎</button>
-        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="">
+        <button on:click={pause} class="w3-button w3-padding-large w3-light-grey w3-xxlarge" style="" use:sound={{src: pause_sound, events: ["click"]}}>
         {#if paused}
         ⏵︎
         {:else}
@@ -82,6 +82,8 @@
 </style>
 
 <script lang="ts">
+    import { sound } from "svelte-sound";
+    import pause_sound from "../assets/pause.mp3";
     // import Grid from "svelte-grid";
     // import gridHelp from "svelte-grid/build/helper/index.mjs";
     
@@ -140,9 +142,7 @@
         }
     }
 
-    function xclocks() {
-        return clocks.slice(0, $config.players)
-    }
+    function xclocks() { return clocks.slice(0, $config.players) }
 
     function clicked(i: number) {
         if (showsettings) {return}

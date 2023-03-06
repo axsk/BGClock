@@ -1,5 +1,11 @@
 <script>
   import { writable } from 'svelte-local-storage-store'
+  import { sound, useSound } from "svelte-sound";
+  import click_mp4 from "../assets/click.mp3";
+  import warn_sound from "../assets/warn.mp3";
+  import over_sound from "../assets/over.mp3"
+  const click_sound = useSound(click_mp4, ["click"])
+
 
   export let id = 0
   
@@ -48,7 +54,11 @@
       if ($state.bronstein - passed > 0) {
         $state.bronstein -= passed
       } else {
+        if ($state.seconds > 0 && $state.seconds - passed - $state.bronstein < 0) {
+          over.play()
+        }
         $state.seconds -= passed - $state.bronstein
+        $state.bronstein > 0 && warning.play()
         $state.bronstein = 0
       }
     }
@@ -108,11 +118,15 @@
     $state.moves = 0
     $state.totaltime = 0  
   }
+
+  let warning
+  let over
   
 </script>
+<audio src={warn_sound} preload="auto" bind:this={warning} />
+<audio src={over_sound} preload="auto" bind:this={over} />
 
-
-<div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown>
+<div id="square" on:click class="{$state.running ? 'running' : ''}" on:keydown use:click_sound>
   {#if editable}
   <input class="w3-input" style="color:black"  bind:value={$state.name}>
   {:else}
