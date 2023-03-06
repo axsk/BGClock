@@ -2,8 +2,8 @@
   import { writable } from 'svelte-local-storage-store'
   import { sound, useSound } from "svelte-sound";
   import click_mp4 from "../assets/click.wav";
-  import warn_sound from "../assets/warn.mp3";
-  import over_sound from "../assets/over.mp3"
+  import warn_sound from "../assets/warn.wav";
+  import over_sound from "../assets/over.ogg"
   const click_sound = useSound(click_mp4, ["click"])
 
 
