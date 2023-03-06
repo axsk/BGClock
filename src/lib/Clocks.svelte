@@ -83,7 +83,7 @@
 
 <script lang="ts">
     import { sound } from "svelte-sound";
-    import pause_sound from "../assets/pause.mp3";
+    import pause_sound from "../assets/pause.wav";
     // import Grid from "svelte-grid";
     // import gridHelp from "svelte-grid/build/helper/index.mjs";
     
